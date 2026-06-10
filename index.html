@@ -343,6 +343,31 @@
         border: 1px solid #999;
       }
     }
+
+    .sync-status {
+      max-width: 1100px;
+      margin: -6px auto 22px;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+      background: rgba(255, 250, 245, 0.7);
+      border: 1px solid rgba(180, 138, 90, 0.22);
+      border-radius: 14px;
+    }
+    .sync-status.ok {
+      color: var(--green);
+      border-color: rgba(61, 117, 81, 0.4);
+      background: rgba(61, 117, 81, 0.08);
+    }
+    .sync-status.warn {
+      color: var(--gold-dark);
+      border-color: rgba(180, 138, 90, 0.45);
+      background: rgba(180, 138, 90, 0.1);
+    }
+    @media print {
+      .sync-status { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -361,6 +386,8 @@
       <button class="top-btn secondary" type="button" id="print-page">Drucken / als PDF speichern</button>
       <button class="top-btn secondary" type="button" id="clear-all">Alle Namen löschen</button>
     </div>
+
+    <p class="sync-status" id="sync-status">Verbinde mit der gemeinsamen Tabelle …</p>
 
     <div class="grid">
       
@@ -702,13 +729,15 @@
     const storageKey = "meli_ale_12_monate_spiel_v1";
 
     // =========================================================================
-    // HIER DIE FORMSPREE-URL EINTRAGEN
-    // Erstelle ein kostenloses Formular auf formspree.io und trage die "Endpoint URL" hier ein.
-    // Beispiel: const FORMSPREE_URL = "https://formspree.io/f/xyzabcde";
-    // Lass die Anführungszeichen stehen!
-    const FORMSPREE_URL = ""; 
+    // HIER DIE GOOGLE-SHEET-URL EINTRAGEN
+    // 1. Apps Script (siehe Anleitung) als Web-App veröffentlichen.
+    // 2. Die "Web-App-URL" (endet auf /exec) hier zwischen die Anführungszeichen kopieren.
+    // Beispiel: const SHEET_API_URL = "https://script.google.com/macros/s/AB.../exec";
+    // Bleibt das Feld leer, speichert die Seite nur lokal im jeweiligen Browser.
+    const SHEET_API_URL = "";
     // =========================================================================
 
+    // Lokaler Cache (Offline-Notfall) – die gemeinsame Tabelle ist die echte Quelle.
     function getSavedData() {
       try {
         return JSON.parse(localStorage.getItem(storageKey)) || {};
@@ -717,41 +746,53 @@
       }
     }
 
-    async function sendEmailBackup(data) {
-      if (!FORMSPREE_URL) return;
+    function saveData(data) {
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
 
-      let emailText = "Aktueller Stand der 12 Monate für Meli & Ale:\n\n";
-      rounds.forEach(r => {
-        const name = data[r.nr] || "Noch offen";
-        emailText += `Runde ${r.nr} (${r.monat}): ${name}\n`;
-      });
+    function setSyncStatus(text, ok) {
+      const el = document.getElementById("sync-status");
+      if (!el) return;
+      el.textContent = text;
+      el.classList.toggle("ok", ok === true);
+      el.classList.toggle("warn", ok === false);
+    }
 
+    // Aktuellen gemeinsamen Stand aus der Google-Tabelle holen.
+    async function syncFromServer() {
+      if (!SHEET_API_URL) {
+        setSyncStatus("Hinweis: Noch keine gemeinsame Tabelle hinterlegt – Namen werden nur lokal auf diesem Gerät gespeichert.", false);
+        return;
+      }
+      setSyncStatus("Lade gespeicherte Namen aus der gemeinsamen Tabelle …", null);
       try {
-        const response = await fetch(FORMSPREE_URL, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            _subject: "Backup: 12 Monate Spiel Meli & Ale",
-            message: emailText,
-            daten: data
-          })
-        });
-
-        if (response.ok) {
-          alert("Namen wurden gespeichert und als Backup per E-Mail gesendet! ✅");
+        const res = await fetch(SHEET_API_URL, { method: "GET" });
+        const json = await res.json();
+        if (json && json.ok && json.data) {
+          saveData(json.data);
+          applyDataToInputs(json.data);
+          setSyncStatus("Mit der gemeinsamen Tabelle synchronisiert ✓", true);
         } else {
-          alert("Namen wurden lokal gespeichert, aber E-Mail-Versand fehlgeschlagen ❌");
+          setSyncStatus("Konnte die Tabelle nicht lesen – es wird der lokale Stand angezeigt.", false);
         }
-      } catch (error) {
-        alert("Namen gespeichert, aber keine Internetverbindung für die E-Mail ❌");
+      } catch (e) {
+        setSyncStatus("Offline – es wird der lokale Stand angezeigt.", false);
       }
     }
 
-    function saveData(data) {
-      localStorage.setItem(storageKey, JSON.stringify(data));
+    // Speicherung an die Google-Tabelle senden (legt dort auch einen Backup-Verlauf an).
+    // Body als reiner Text => vermeidet CORS-Preflight bei Apps Script.
+    async function pushToServer(payload) {
+      if (!SHEET_API_URL) return { offline: true };
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        return await res.json();
+      } catch (e) {
+        return { offline: true };
+      }
     }
 
     function setSavedNote(roundNr, text, ok = true) {
@@ -788,72 +829,98 @@
       });
     }
 
-    function loadInputs() {
-      const data = getSavedData();
+    function applyDataToInputs(data) {
       rounds.forEach((r) => {
         const input = document.getElementById(`name-${r.nr}`);
-        if (input && data[r.nr]) {
-          input.value = data[r.nr];
-          setSavedNote(r.nr, `Gespeichert: ${data[r.nr]}`, true);
-        }
+        if (!input) return;
+        const val = data[r.nr] || "";
+        input.value = val;
+        setSavedNote(r.nr, val ? `Gespeichert: ${val}` : "Noch nicht gespeichert", !!val);
       });
       updateSummary();
     }
 
-    function saveRound(roundNr) {
+    function loadInputs() {
+      applyDataToInputs(getSavedData()); // sofort: lokaler Stand
+      syncFromServer();                  // dann: gemeinsamer Stand aus der Tabelle
+    }
+
+    async function saveRound(roundNr) {
       const input = document.getElementById(`name-${roundNr}`);
       const data = getSavedData();
       const name = input.value.trim();
 
       if (name) {
         data[roundNr] = name;
-        setSavedNote(roundNr, `Gespeichert: ${name}`, true);
       } else {
         delete data[roundNr];
-        setSavedNote(roundNr, "Name gelöscht / noch offen", false);
       }
-
-      saveData(data);
+      saveData(data);               // sofort lokal sichern
+      setSavedNote(roundNr, "Speichere …", !!name);
       updateSummary();
+
+      const res = await pushToServer({ action: "save", round: roundNr, name: name });
+      if (res && res.ok) {
+        if (res.data) { saveData(res.data); updateSummary(); }
+        setSavedNote(roundNr, name ? `Gespeichert: ${name}` : "Name gelöscht / noch offen", !!name);
+        setSyncStatus("In der gemeinsamen Tabelle gespeichert ✓", true);
+      } else if (res && res.offline) {
+        setSavedNote(roundNr, name ? `Nur lokal gespeichert (offline): ${name}` : "Lokal gelöscht (offline)", !!name);
+        setSyncStatus("Keine Verbindung zur Tabelle – nur lokal gespeichert.", false);
+      } else {
+        setSavedNote(roundNr, "Fehler beim Speichern in der Tabelle (lokal gesichert).", false);
+        setSyncStatus("Speichern in der Tabelle fehlgeschlagen.", false);
+      }
     }
 
-    function saveAll() {
+    async function saveAll() {
       const data = getSavedData();
-
       rounds.forEach((r) => {
         const input = document.getElementById(`name-${r.nr}`);
         const name = input.value.trim();
-
         if (name) {
           data[r.nr] = name;
-          setSavedNote(r.nr, `Gespeichert: ${name}`, true);
         } else {
           delete data[r.nr];
-          setSavedNote(r.nr, "Noch nicht gespeichert", false);
         }
       });
-
       saveData(data);
-      updateSummary();
-      
-      if (FORMSPREE_URL) {
-        sendEmailBackup(data);
+      applyDataToInputs(data);
+      setSyncStatus("Speichere alle Namen …", null);
+
+      const res = await pushToServer({ action: "saveAll", data: data });
+      if (res && res.ok) {
+        if (res.data) { saveData(res.data); applyDataToInputs(res.data); }
+        setSyncStatus("Alle Namen in der gemeinsamen Tabelle gespeichert ✓", true);
+        alert("Alle Namen wurden in der gemeinsamen Tabelle gespeichert (inkl. Backup-Verlauf). ✅");
+      } else if (res && res.offline) {
+        setSyncStatus("Keine Verbindung zur Tabelle – nur lokal gespeichert.", false);
+        alert("Keine Internetverbindung: Die Namen wurden nur lokal auf diesem Gerät gespeichert.");
       } else {
-        alert("Alle eingetragenen Namen wurden lokal gespeichert. (Kein E-Mail Backup hinterlegt)");
+        setSyncStatus("Speichern in der Tabelle fehlgeschlagen.", false);
+        alert("Speichern in der Tabelle fehlgeschlagen. Die Namen sind lokal gesichert.");
       }
     }
 
-    function clearAll() {
-      if (!confirm("Möchtest du wirklich alle gespeicherten Namen löschen?")) return;
+    async function clearAll() {
+      if (!confirm("Möchtest du wirklich alle gespeicherten Namen löschen? (Der Backup-Verlauf in der Tabelle bleibt zur Sicherheit erhalten.)")) return;
       localStorage.removeItem(storageKey);
 
+      const empty = {};
       rounds.forEach((r) => {
         const input = document.getElementById(`name-${r.nr}`);
         input.value = "";
         setSavedNote(r.nr, "Noch nicht gespeichert", false);
+        empty[r.nr] = "";
       });
-
       updateSummary();
+
+      const res = await pushToServer({ action: "saveAll", data: empty });
+      if (res && res.ok) {
+        setSyncStatus("Alle Namen geleert – der Backup-Verlauf in der Tabelle bleibt erhalten.", true);
+      } else if (res && res.offline) {
+        setSyncStatus("Lokal geleert. Tabelle nicht erreichbar – dort bleiben die Namen vorerst stehen.", false);
+      }
     }
 
     function exportCsv() {
