@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>12 Monate für Meli & Ale</title>
+  <style>
+    :root {
+      --bg: #faf6f0;
+      --paper: #fffaf5;
+      --text: #2d2926;
+      --muted: #7b6f67;
+      --gold: #b48a5a;
+      --gold-dark: #8a653c;
+      --rose: #ead7cc;
+      --green: #3d7551;
+      --shadow: 0 12px 30px rgba(45, 41, 38, 0.10);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top left, rgba(234, 215, 204, 0.8), transparent 35%),
+        linear-gradient(135deg, #faf6f0 0%, #fffaf5 50%, #f3ebe3 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 34px 18px 70px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 34px 18px;
+      border: 1px solid rgba(180, 138, 90, 0.25);
+      background: rgba(255, 250, 245, 0.76);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 1.05;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 14px auto 0;
+      max-width: 760px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0 30px;
+    }
+
+    .top-btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      background: var(--gold-dark);
+      box-shadow: 0 8px 20px rgba(138, 101, 60, 0.18);
+    }
+
+    .top-btn.secondary {
+      color: var(--gold-dark);
+      background: #fff;
+      border: 1px solid rgba(138, 101, 60, 0.25);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid rgba(180, 138, 90, 0.28);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: linear-gradient(90deg, var(--gold), #e8cfac);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      font-weight: 500;
+      line-height: 1.15;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      background: var(--rose);
+      color: var(--gold-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 800;
+    }
+
+    .content-block {
+      margin: 14px 0;
+      padding: 14px 15px;
+      background: rgba(234, 215, 204, 0.38);
+      border-radius: 16px;
+    }
+
+    .content-block.task {
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(180, 138, 90, 0.18);
+    }
+
+    .label {
+      margin: 0 0 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-weight: 800;
+    }
+
+    .text {
+      margin: 0;
+      font-size: 1.06rem;
+      line-height: 1.55;
+    }
+
+    .input-label {
+      display: block;
+      margin: 18px 0 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .name-input {
+      width: 100%;
+      border: 1px solid rgba(45, 41, 38, 0.16);
+      border-radius: 14px;
+      padding: 14px 14px;
+      font-size: 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: white;
+      outline: none;
+    }
+
+    .name-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(180, 138, 90, 0.14);
+    }
+
+    .save-btn {
+      width: 100%;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 16px;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      box-shadow: 0 8px 18px rgba(138, 101, 60, 0.20);
+    }
+
+    .saved-note {
+      margin: 10px 0 0;
+      min-height: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .saved-note.ok {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .summary {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: var(--radius);
+      background: #fff;
+      border: 1px solid rgba(180, 138, 90, 0.25);
+      box-shadow: var(--shadow);
+    }
+
+    .summary h2 {
+      margin-bottom: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee4dc;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--gold-dark);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    td {
+      line-height: 1.45;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .print-note {
+      margin: 12px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 760px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 18px 12px 50px;
+      }
+
+      .toolbar {
+        justify-content: stretch;
+      }
+
+      .top-btn {
+        flex: 1 1 100%;
+      }
+
+      th:nth-child(3), td:nth-child(3) {
+        display: none;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .toolbar,
+      .save-btn,
+      .print-note {
+        display: none !important;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      header,
+      .card,
+      .summary {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .name-input {
+        border: 1px solid #999;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>12 Monate für Meli & Ale</h1>
+      <p class="subtitle">
+        Spielübersicht mit gespeicherten Namen der ausgeschiedenen Personen.
+        Die Eingaben werden direkt in diesem Browser gespeichert, sobald auf „Speichern“ geklickt wird.
+      </p>
+    </header>
+
+    <div class="toolbar">
+      <button class="top-btn" type="button" id="save-all">Alle Namen speichern</button>
+      <button class="top-btn secondary" type="button" id="export-csv">Als CSV exportieren</button>
+      <button class="top-btn secondary" type="button" id="print-page">Drucken / als PDF speichern</button>
+      <button class="top-btn secondary" type="button" id="clear-all">Alle Namen löschen</button>
+    </div>
+
+    <div class="grid">
+      
+      <section class="card" data-round="1">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 1</p>
+            <h2>September 2026</h2>
+          </div>
+          <span class="badge">01</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Einen Lippenstift oder Labello</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Wer ausscheidet, macht im September:</p>
+          <p class="text">Meli &amp; Ale eine kleine Date-Night-Box vorbereiten, zum Beispiel mit Snacks, Getränk und einem Filmvorschlag.</p>
+        </div>
+
+        <label class="input-label" for="name-1">Name der ausgeschiedenen Person</label>
+        <input id="name-1" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="1">Speichern</button>
+        <p class="saved-note" id="saved-1">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="2">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 2</p>
+            <h2>Oktober 2026</h2>
+          </div>
+          <span class="badge">02</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Einen Gürtel</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Oktober:</p>
+          <p class="text">Das Brautpaar zu einem Kaffee oder Dessert einladen.</p>
+        </div>
+
+        <label class="input-label" for="name-2">Name der ausgeschiedenen Person</label>
+        <input id="name-2" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="2">Speichern</button>
+        <p class="saved-note" id="saved-2">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="3">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 3</p>
+            <h2>November 2026</h2>
+          </div>
+          <span class="badge">03</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Eine Brille oder Sonnenbrille</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im November:</p>
+          <p class="text">Meli &amp; Ale einen gemütlichen Herbstabend schenken, zum Beispiel Tee, Kerzen, Schokolade oder eine kleine Überraschung vor die Tür stellen.</p>
+        </div>
+
+        <label class="input-label" for="name-3">Name der ausgeschiedenen Person</label>
+        <input id="name-3" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="3">Speichern</button>
+        <p class="saved-note" id="saved-3">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="4">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 4</p>
+            <h2>Dezember 2026</h2>
+          </div>
+          <span class="badge">04</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Einen Schlüsselbund</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Dezember:</p>
+          <p class="text">Dem Brautpaar eine kleine Weihnachtsüberraschung organisieren, zum Beispiel Guetzli, Glühwein, Adventsgruss oder Weihnachtskarte.</p>
+        </div>
+
+        <label class="input-label" for="name-4">Name der ausgeschiedenen Person</label>
+        <input id="name-4" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="4">Speichern</button>
+        <p class="saved-note" id="saved-4">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="5">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 5</p>
+            <h2>Januar 2027</h2>
+          </div>
+          <span class="badge">05</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Eine Uhr oder Smartwatch</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Januar:</p>
+          <p class="text">Meli &amp; Ale eine Neujahrsnachricht schicken mit einem schönen Wunsch und einem gemeinsamen Foto vom Hochzeitsfest.</p>
+        </div>
+
+        <label class="input-label" for="name-5">Name der ausgeschiedenen Person</label>
+        <input id="name-5" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="5">Speichern</button>
+        <p class="saved-note" id="saved-5">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="6">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 6</p>
+            <h2>Februar 2027</h2>
+          </div>
+          <span class="badge">06</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Ein Taschentuch</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Februar:</p>
+          <p class="text">Dem Brautpaar eine kleine romantische Überraschung machen, passend zum Valentinsmonat, zum Beispiel Blumen, Pralinen oder eine liebe Karte.</p>
+        </div>
+
+        <label class="input-label" for="name-6">Name der ausgeschiedenen Person</label>
+        <input id="name-6" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="6">Speichern</button>
+        <p class="saved-note" id="saved-6">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="7">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 7</p>
+            <h2>März 2027</h2>
+          </div>
+          <span class="badge">07</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Einen Schuh</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im März:</p>
+          <p class="text">Meli &amp; Ale zu einem Spaziergang oder kleinen Ausflug einladen.</p>
+        </div>
+
+        <label class="input-label" for="name-7">Name der ausgeschiedenen Person</label>
+        <input id="name-7" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="7">Speichern</button>
+        <p class="saved-note" id="saved-7">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="8">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 8</p>
+            <h2>April 2027</h2>
+          </div>
+          <span class="badge">08</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Etwas Blaues</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im April:</p>
+          <p class="text">Dem Brautpaar einen kleinen Frühlingsgruss schenken, zum Beispiel Blumen, Pflanze oder Picknick-Idee.</p>
+        </div>
+
+        <label class="input-label" for="name-8">Name der ausgeschiedenen Person</label>
+        <input id="name-8" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="8">Speichern</button>
+        <p class="saved-note" id="saved-8">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="9">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 9</p>
+            <h2>Mai 2027</h2>
+          </div>
+          <span class="badge">09</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Eine Serviette</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Mai:</p>
+          <p class="text">Für Meli &amp; Ale ein Frühstück oder Brunch-Gutschein organisieren, selbstgemacht oder in einem Café.</p>
+        </div>
+
+        <label class="input-label" for="name-9">Name der ausgeschiedenen Person</label>
+        <input id="name-9" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="9">Speichern</button>
+        <p class="saved-note" id="saved-9">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="10">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 10</p>
+            <h2>Juni 2027</h2>
+          </div>
+          <span class="badge">10</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Eine Krawatte, Fliege oder ein Schmuckstück</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Juni:</p>
+          <p class="text">Ein Sommergetränk-Date schenken, zum Beispiel Aperol, Hugo, Eistee oder ein kleiner Apéro bei euch zuhause.</p>
+        </div>
+
+        <label class="input-label" for="name-10">Name der ausgeschiedenen Person</label>
+        <input id="name-10" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="10">Speichern</button>
+        <p class="saved-note" id="saved-10">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="11">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 11</p>
+            <h2>Juli 2027</h2>
+          </div>
+          <span class="badge">11</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Ein Selfie mit einer Person vom anderen Tisch</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im Juli:</p>
+          <p class="text">Meli &amp; Ale ein lustiges Erinnerungsfoto oder Mini-Fotoalbum von der Hochzeit schicken.</p>
+        </div>
+
+        <label class="input-label" for="name-11">Name der ausgeschiedenen Person</label>
+        <input id="name-11" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="11">Speichern</button>
+        <p class="saved-note" id="saved-11">Noch nicht gespeichert</p>
+      </section>
+    
+      <section class="card" data-round="12">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Runde 12</p>
+            <h2>August 2027</h2>
+          </div>
+          <span class="badge">12</span>
+        </div>
+
+        <div class="content-block">
+          <p class="label">Zu holen</p>
+          <p class="text">Eine Socke</p>
+        </div>
+
+        <div class="content-block task">
+          <p class="label">Aufgabe im August:</p>
+          <p class="text">Zum 1. Hochzeitstag eine besondere Überraschung machen: Karte, Blumen, Video-Botschaft oder Einladung auf einen Drink.</p>
+        </div>
+
+        <label class="input-label" for="name-12">Name der ausgeschiedenen Person</label>
+        <input id="name-12" class="name-input" type="text" placeholder="Name eintragen..." autocomplete="off">
+
+        <button class="save-btn" type="button" data-save="12">Speichern</button>
+        <p class="saved-note" id="saved-12">Noch nicht gespeichert</p>
+      </section>
+    
+    </div>
+
+    <section class="summary">
+      <h2>Übersicht der gespeicherten Personen</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Runde</th>
+            <th>Monat</th>
+            <th>Aufgabe</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+      </table>
+      <p class="print-note">
+        Tipp: Nach dem Speichern kann diese Seite gedruckt oder als PDF gespeichert werden.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const rounds = [{'nr': 1, 'monat': 'September 2026', 'holen': 'Einen Lippenstift oder Labello', 'aufgabe_titel': 'Wer ausscheidet, macht im September:', 'aufgabe': 'Meli & Ale eine kleine Date-Night-Box vorbereiten, zum Beispiel mit Snacks, Getränk und einem Filmvorschlag.'}, {'nr': 2, 'monat': 'Oktober 2026', 'holen': 'Einen Gürtel', 'aufgabe_titel': 'Aufgabe im Oktober:', 'aufgabe': 'Das Brautpaar zu einem Kaffee oder Dessert einladen.'}, {'nr': 3, 'monat': 'November 2026', 'holen': 'Eine Brille oder Sonnenbrille', 'aufgabe_titel': 'Aufgabe im November:', 'aufgabe': 'Meli & Ale einen gemütlichen Herbstabend schenken, zum Beispiel Tee, Kerzen, Schokolade oder eine kleine Überraschung vor die Tür stellen.'}, {'nr': 4, 'monat': 'Dezember 2026', 'holen': 'Einen Schlüsselbund', 'aufgabe_titel': 'Aufgabe im Dezember:', 'aufgabe': 'Dem Brautpaar eine kleine Weihnachtsüberraschung organisieren, zum Beispiel Guetzli, Glühwein, Adventsgruss oder Weihnachtskarte.'}, {'nr': 5, 'monat': 'Januar 2027', 'holen': 'Eine Uhr oder Smartwatch', 'aufgabe_titel': 'Aufgabe im Januar:', 'aufgabe': 'Meli & Ale eine Neujahrsnachricht schicken mit einem schönen Wunsch und einem gemeinsamen Foto vom Hochzeitsfest.'}, {'nr': 6, 'monat': 'Februar 2027', 'holen': 'Ein Taschentuch', 'aufgabe_titel': 'Aufgabe im Februar:', 'aufgabe': 'Dem Brautpaar eine kleine romantische Überraschung machen, passend zum Valentinsmonat, zum Beispiel Blumen, Pralinen oder eine liebe Karte.'}, {'nr': 7, 'monat': 'März 2027', 'holen': 'Einen Schuh', 'aufgabe_titel': 'Aufgabe im März:', 'aufgabe': 'Meli & Ale zu einem Spaziergang oder kleinen Ausflug einladen.'}, {'nr': 8, 'monat': 'April 2027', 'holen': 'Etwas Blaues', 'aufgabe_titel': 'Aufgabe im April:', 'aufgabe': 'Dem Brautpaar einen kleinen Frühlingsgruss schenken, zum Beispiel Blumen, Pflanze oder Picknick-Idee.'}, {'nr': 9, 'monat': 'Mai 2027', 'holen': 'Eine Serviette', 'aufgabe_titel': 'Aufgabe im Mai:', 'aufgabe': 'Für Meli & Ale ein Frühstück oder Brunch-Gutschein organisieren, selbstgemacht oder in einem Café.'}, {'nr': 10, 'monat': 'Juni 2027', 'holen': 'Eine Krawatte, Fliege oder ein Schmuckstück', 'aufgabe_titel': 'Aufgabe im Juni:', 'aufgabe': 'Ein Sommergetränk-Date schenken, zum Beispiel Aperol, Hugo, Eistee oder ein kleiner Apéro bei euch zuhause.'}, {'nr': 11, 'monat': 'Juli 2027', 'holen': 'Ein Selfie mit einer Person vom anderen Tisch', 'aufgabe_titel': 'Aufgabe im Juli:', 'aufgabe': 'Meli & Ale ein lustiges Erinnerungsfoto oder Mini-Fotoalbum von der Hochzeit schicken.'}, {'nr': 12, 'monat': 'August 2027', 'holen': 'Eine Socke', 'aufgabe_titel': 'Aufgabe im August:', 'aufgabe': 'Zum 1. Hochzeitstag eine besondere Überraschung machen: Karte, Blumen, Video-Botschaft oder Einladung auf einen Drink.'}];
+    const storageKey = "meli_ale_12_monate_spiel_v1";
+
+    // =========================================================================
+    // HIER DIE FORMSPREE-URL EINTRAGEN
+    // Erstelle ein kostenloses Formular auf formspree.io und trage die "Endpoint URL" hier ein.
+    // Beispiel: const FORMSPREE_URL = "https://formspree.io/f/xyzabcde";
+    // Lass die Anführungszeichen stehen!
+    const FORMSPREE_URL = ""; 
+    // =========================================================================
+
+    function getSavedData() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    async function sendEmailBackup(data) {
+      if (!FORMSPREE_URL) return;
+
+      let emailText = "Aktueller Stand der 12 Monate für Meli & Ale:\n\n";
+      rounds.forEach(r => {
+        const name = data[r.nr] || "Noch offen";
+        emailText += `Runde ${r.nr} (${r.monat}): ${name}\n`;
+      });
+
+      try {
+        const response = await fetch(FORMSPREE_URL, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: "Backup: 12 Monate Spiel Meli & Ale",
+            message: emailText,
+            daten: data
+          })
+        });
+
+        if (response.ok) {
+          alert("Namen wurden gespeichert und als Backup per E-Mail gesendet! ✅");
+        } else {
+          alert("Namen wurden lokal gespeichert, aber E-Mail-Versand fehlgeschlagen ❌");
+        }
+      } catch (error) {
+        alert("Namen gespeichert, aber keine Internetverbindung für die E-Mail ❌");
+      }
+    }
+
+    function saveData(data) {
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function setSavedNote(roundNr, text, ok = true) {
+      const note = document.getElementById(`saved-${roundNr}`);
+      if (!note) return;
+      note.textContent = text;
+      note.classList.toggle("ok", ok);
+    }
+
+    function updateSummary() {
+      const data = getSavedData();
+      const tbody = document.getElementById("summary-body");
+      tbody.innerHTML = "";
+
+      rounds.forEach((r) => {
+        const tr = document.createElement("tr");
+
+        const tdRound = document.createElement("td");
+        tdRound.textContent = `Runde ${r.nr}`;
+
+        const tdMonth = document.createElement("td");
+        tdMonth.textContent = r.monat;
+
+        const tdTask = document.createElement("td");
+        tdTask.textContent = r.aufgabe;
+
+        const tdName = document.createElement("td");
+        const name = data[r.nr] || "";
+        tdName.textContent = name || "Noch offen";
+        if (!name) tdName.classList.add("empty");
+
+        tr.append(tdRound, tdMonth, tdTask, tdName);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadInputs() {
+      const data = getSavedData();
+      rounds.forEach((r) => {
+        const input = document.getElementById(`name-${r.nr}`);
+        if (input && data[r.nr]) {
+          input.value = data[r.nr];
+          setSavedNote(r.nr, `Gespeichert: ${data[r.nr]}`, true);
+        }
+      });
+      updateSummary();
+    }
+
+    function saveRound(roundNr) {
+      const input = document.getElementById(`name-${roundNr}`);
+      const data = getSavedData();
+      const name = input.value.trim();
+
+      if (name) {
+        data[roundNr] = name;
+        setSavedNote(roundNr, `Gespeichert: ${name}`, true);
+      } else {
+        delete data[roundNr];
+        setSavedNote(roundNr, "Name gelöscht / noch offen", false);
+      }
+
+      saveData(data);
+      updateSummary();
+    }
+
+    function saveAll() {
+      const data = getSavedData();
+
+      rounds.forEach((r) => {
+        const input = document.getElementById(`name-${r.nr}`);
+        const name = input.value.trim();
+
+        if (name) {
+          data[r.nr] = name;
+          setSavedNote(r.nr, `Gespeichert: ${name}`, true);
+        } else {
+          delete data[r.nr];
+          setSavedNote(r.nr, "Noch nicht gespeichert", false);
+        }
+      });
+
+      saveData(data);
+      updateSummary();
+      
+      if (FORMSPREE_URL) {
+        sendEmailBackup(data);
+      } else {
+        alert("Alle eingetragenen Namen wurden lokal gespeichert. (Kein E-Mail Backup hinterlegt)");
+      }
+    }
+
+    function clearAll() {
+      if (!confirm("Möchtest du wirklich alle gespeicherten Namen löschen?")) return;
+      localStorage.removeItem(storageKey);
+
+      rounds.forEach((r) => {
+        const input = document.getElementById(`name-${r.nr}`);
+        input.value = "";
+        setSavedNote(r.nr, "Noch nicht gespeichert", false);
+      });
+
+      updateSummary();
+    }
+
+    function exportCsv() {
+      const data = getSavedData();
+      const rows = [["Runde", "Monat", "Zu holen", "Aufgabe", "Name"]];
+      rounds.forEach((r) => {
+        rows.push([
+          `Runde ${r.nr}`,
+          r.monat,
+          r.holen,
+          r.aufgabe,
+          data[r.nr] || ""
+        ]);
+      });
+
+      const csv = rows.map((row) =>
+        row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(";")
+      ).join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "12-monate-fuer-meli-und-ale.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.querySelectorAll("[data-save]").forEach((button) => {
+      button.addEventListener("click", () => saveRound(button.dataset.save));
+    });
+
+    document.getElementById("save-all").addEventListener("click", saveAll);
+    document.getElementById("clear-all").addEventListener("click", clearAll);
+    document.getElementById("export-csv").addEventListener("click", exportCsv);
+    document.getElementById("print-page").addEventListener("click", () => window.print());
+
+    loadInputs();
+  </script>
+</body>
+</html>
